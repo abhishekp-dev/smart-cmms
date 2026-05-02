@@ -324,12 +324,18 @@ app.get('/machines/:id', ensureAuthenticated, (req, res) => {
     [req.params.id]
   );
 
+  const safetyIncidents = all(
+    'SELECT * FROM safety_reports WHERE machine_id = ? ORDER BY date DESC',
+    [req.params.id]
+  );
+
   res.render('machine-details', {
     title: machine.name,
     machine,
     components,
     materialUsage,
-    workOrders
+    workOrders,
+    safetyIncidents
   });
 });
 
