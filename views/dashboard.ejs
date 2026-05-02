@@ -1,0 +1,106 @@
+<%- include('partials/header', { title }) %>
+<div class="app-shell d-lg-flex">
+  <%- include('partials/sidebar') %>
+
+  <div class="content-area">
+    <%- include('partials/topbar', { title }) %>
+
+    <main class="p-3 p-lg-4">
+      <div class="row g-4 mb-4">
+        <div class="col-sm-6 col-xl-3">
+          <div class="surface-card metric-card p-4 h-100">
+            <div class="text-muted small">MTTR</div>
+            <div class="metric-value"><%= metrics.mttr %>h</div>
+            <div class="text-muted">Average repair duration</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="surface-card metric-card p-4 h-100">
+            <div class="text-muted small">MTBF</div>
+            <div class="metric-value"><%= metrics.mtbf %>h</div>
+            <div class="text-muted">Average uptime per failure</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-2">
+          <div class="surface-card metric-card p-4 h-100">
+            <div class="text-muted small">Total Machines</div>
+            <div class="metric-value"><%= metrics.totalMachines %></div>
+            <div class="text-muted">Across the facility</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-2">
+          <div class="surface-card metric-card p-4 h-100">
+            <div class="text-muted small">Active</div>
+            <div class="metric-value"><%= metrics.activeMachines %></div>
+            <div class="text-muted">Healthy assets</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-2">
+          <div class="surface-card metric-card p-4 h-100">
+            <div class="text-muted small">Breakdown</div>
+            <div class="metric-value text-danger"><%= metrics.breakdownMachines %></div>
+            <div class="text-muted">Requires action</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <div class="surface-card p-4 h-100">
+            <div class="section-title mb-4">Machine Status</div>
+            <% const total = machineStatusSummary.reduce((sum, item) => sum + item.count, 0); %>
+            <% machineStatusSummary.forEach((item) => { %>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                  <span><%= item.status %></span>
+                  <span class="text-muted"><%= item.count %></span>
+                </div>
+                <div class="chart-bar">
+                  <span style="width: <%= total ? (item.count / total) * 100 : 0 %>%"></span>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="col-xl-8">
+          <div class="surface-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="section-title">Recent Breakdowns</div>
+              <a href="/work-orders" class="btn btn-sm btn-outline-primary">View all</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Work Order</th>
+                    <th>Machine</th>
+                    <th>Technician</th>
+                    <th>Status</th>
+                    <th>Failure Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% recentBreakdowns.forEach((item) => { %>
+                    <tr>
+                      <td><%= item.title %></td>
+                      <td><%= item.machine_name %></td>
+                      <td><%= item.technician_name || 'Unassigned' %></td>
+                      <td>
+                        <span class="status-pill status-<%= item.status.toLowerCase().replace(/\s+/g, '-') %>">
+                          <%= item.status %>
+                        </span>
+                      </td>
+                      <td><%= item.failure_time ? new Date(item.failure_time).toLocaleString() : '-' %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,42 @@
+<%- include('partials/header', { title }) %>
+<main class="login-page">
+  <div class="login-card row g-0 w-100">
+    <div class="col-lg-6 login-hero p-5 d-flex flex-column justify-content-center">
+      <div class="text-uppercase small mb-2 text-white-50">JK Fenner Maintenance</div>
+      <h1 class="display-6 fw-bold mb-3">Keep machines healthy, teams aligned, and downtime visible.</h1>
+      <p class="mb-4">
+        Track work orders, monitor MTTR and MTBF, control spare stock, and review safety reports from one responsive dashboard.
+      </p>
+      <div class="small">
+        JK Fenner accounts:
+        <div class="mt-2"><code>admin@jkfenner.com / 123</code></div>
+        <div><code>manager@jkfenner.com / 123</code></div>
+        <div><code>ravi@jkfenner.com / 123</code></div>
+      </div>
+    </div>
+    <div class="col-lg-6 p-4 p-lg-5">
+      <div class="mb-4">
+        <div class="text-uppercase small text-primary fw-semibold">Welcome back</div>
+        <h2 class="mb-1">Sign in to JK Fenner CMMS</h2>
+        <p class="text-muted mb-0">Use your JK Fenner role-based account to continue.</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/login" class="d-grid gap-3">
+        <div>
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control form-control-lg" required />
+        </div>
+        <div>
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control form-control-lg" required />
+        </div>
+        <button class="btn btn-primary btn-lg">Login</button>
+      </form>
+    </div>
+  </div>
+</main>
+<%- include('partials/footer') %>

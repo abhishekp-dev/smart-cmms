@@ -1,0 +1,51 @@
+<%- include('partials/header', { title }) %>
+<div class="app-shell d-lg-flex">
+  <%- include('partials/sidebar') %>
+
+  <div class="content-area">
+    <%- include('partials/topbar', { title }) %>
+
+    <main class="p-3 p-lg-4">
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <div class="surface-card p-4">
+            <div class="section-title mb-3">Report Incident</div>
+            <form method="POST" action="/safety" class="d-grid gap-3">
+              <input class="form-control" name="employee_name" placeholder="Employee name" required />
+              <textarea class="form-control" rows="4" name="description" placeholder="Incident description" required></textarea>
+              <input class="form-control" type="date" name="date" required />
+              <button class="btn btn-primary">Submit Report</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-xl-8">
+          <div class="surface-card p-4">
+            <div class="section-title mb-3">Safety Reports</div>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% reports.forEach((report) => { %>
+                    <tr>
+                      <td><%= report.employee_name %></td>
+                      <td><%= report.description %></td>
+                      <td><%= report.date %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<%- include('partials/footer') %>

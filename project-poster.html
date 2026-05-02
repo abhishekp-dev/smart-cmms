@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart CMMS Predictive Maintenance Poster</title>
+  <style>
+    :root {
+      --brand: #c90000;
+      --ink: #080808;
+      --muted: #4a4a4a;
+      --line: #d9d9d9;
+      --soft: #f6f8fb;
+      --blue: #1d5f8a;
+      --green: #1f7a4d;
+      --amber: #b66a00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #20232a;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .poster {
+      width: 1600px;
+      min-height: 860px;
+      margin: 18px auto;
+      background: #fff;
+      border: 8px solid #11141a;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .top-band {
+      display: grid;
+      grid-template-columns: 130px 1fr 150px;
+      gap: 18px;
+      align-items: center;
+      background: var(--brand);
+      color: #fff;
+      padding: 12px 20px 8px;
+      min-height: 150px;
+    }
+
+    .logo-box,
+    .year-box {
+      height: 104px;
+      background: #fff;
+      color: var(--brand);
+      display: grid;
+      place-items: center;
+      border: 4px solid #f1f1f1;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .logo-box {
+      border-color: #7c4dff;
+      color: #263238;
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    .year-box {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      line-height: 0.9;
+    }
+
+    .year-box span {
+      display: block;
+      color: #8b1a1a;
+      font-size: 15px;
+      line-height: 1.05;
+      margin-top: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .title-wrap {
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      text-transform: uppercase;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .title-wrap h2 {
+      margin: 8px 0 5px;
+      font-size: 22px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .authors {
+      font-family: Arial, Helvetica, sans-serif;
+      text-transform: none;
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .date {
+      margin-top: 4px;
+      font-size: 18px;
+      font-weight: 800;
+      font-family: Arial, Helvetica, sans-serif;
+      text-transform: none;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1.02fr 1.04fr 1.04fr 1.02fr;
+      gap: 24px;
+      padding: 8px 20px 12px;
+    }
+
+    .section {
+      break-inside: avoid;
+      margin-bottom: 14px;
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      padding: 5px 8px;
+      background: var(--brand);
+      color: #fff;
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 7px;
+      font-size: 15px;
+      line-height: 1.33;
+      text-align: justify;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    li {
+      margin: 0 0 5px;
+      font-size: 14px;
+      line-height: 1.27;
+    }
+
+    .lead-label {
+      color: var(--brand);
+      font-weight: 800;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 7px;
+    }
+
+    .mini-table th {
+      background: #eef3f8;
+      color: #111;
+      text-align: left;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--line);
+      padding: 6px 7px;
+      vertical-align: top;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 8px 0 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      padding: 8px;
+      text-align: center;
+      min-height: 78px;
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--brand);
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      line-height: 1.15;
+    }
+
+    .diagram {
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      background: #fbfcfd;
+      padding: 8px;
+    }
+
+    .flow {
+      width: 100%;
+      height: 278px;
+      display: block;
+    }
+
+    .caption {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .refs {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .refs li {
+      border-bottom: 1px solid #e6e6e6;
+      padding-bottom: 5px;
+      font-size: 12.5px;
+      overflow-wrap: anywhere;
+    }
+
+    .badge-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .badge {
+      color: #fff;
+      padding: 7px 6px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .badge.green { background: var(--green); }
+    .badge.amber { background: var(--amber); }
+    .badge.blue { background: var(--blue); }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .poster {
+        width: 100%;
+        min-height: auto;
+        margin: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      @page {
+        size: A3 landscape;
+        margin: 8mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <header class="top-band">
+      <div class="logo-box">JKF<br />CMMS</div>
+      <div class="title-wrap">
+        <h1>Thiagarajar College of Engineering</h1>
+      </div>
+      <div class="year-box">2026<span>Industry<br />Maintenance<br />System</span></div>
+    </header>
+
+    <section class="content">
+      <div>
+        <article class="section">
+          <h3>Abstract</h3>
+          <p>
+            This project presents a web-based Computerized Maintenance Management System
+            for monitoring industrial machines, maintenance work orders, spare resources
+            and safety records. The system replaces scattered manual tracking with a
+            centralized dashboard where Admin, Manager and Technician users can view
+            machine status, record breakdowns, assign work and analyze maintenance
+            performance.
+          </p>
+          <p>
+            A predictive maintenance module extends the CMMS by using historical failure
+            and repair logs to estimate MTBF, MTTR, failure probability and risk level.
+            The solution combines Node.js, Express, EJS, SQLite and an XGBoost-based
+            Python microservice to support faster maintenance decisions and improved
+            machine availability.
+          </p>
+        </article>
+
+        <article class="section">
+          <h3>Background</h3>
+          <p>
+            Manufacturing equipment such as mixers, mills, extruders, presses, conveyors
+            and cooling systems require continuous monitoring to avoid unexpected downtime.
+            Traditional maintenance practices depend heavily on delayed reporting and
+            manual stock checks, which can increase repair time and reduce visibility.
+          </p>
+          <p>
+            A CMMS improves reliability by connecting machine health, technician activity,
+            spare material usage and safety incidents in one application. Predictive
+            analytics further helps identify machines that may need attention before a
+            major breakdown occurs.
+          </p>
+        </article>
+
+        <article class="section">
+          <h3>Objectives</h3>
+          <ul>
+            <li>Digitize machine and maintenance records.</li>
+            <li>Track work orders and technician tasks.</li>
+            <li>Monitor MTTR, MTBF and machine status.</li>
+            <li>Predict maintenance risk using ML models.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div>
+        <article class="section">
+          <h3>Methods</h3>
+          <p><span class="lead-label">System Design:</span> The application follows a web-based architecture with an Express server, EJS pages, Bootstrap styling and SQLite persistence.</p>
+          <p><span class="lead-label">Authentication:</span> Users sign in through role-based accounts for Admin, Manager and Technician permissions.</p>
+          <p><span class="lead-label">Maintenance Records:</span> Work orders store machine, title, priority, assigned technician, failure time, start time, end time and status.</p>
+          <p><span class="lead-label">Resource Control:</span> Materials include current quantity, threshold value and machine-wise usage to support spare planning.</p>
+          <p><span class="lead-label">Predictive Engine:</span> The Node.js app calls a Python FastAPI service. XGBoost models process rolling-window features from the latest ten logs.</p>
+        </article>
+
+        <article class="section">
+          <h3>Architecture Illustration</h3>
+          <div class="diagram">
+            <svg class="flow" viewBox="0 0 470 278" role="img" aria-label="Smart CMMS architecture diagram">
+              <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L0,6 L9,3 z" fill="#17202a" />
+                </marker>
+              </defs>
+              <rect x="12" y="18" width="120" height="52" fill="#e7f0f7" stroke="#7aa7c7" />
+              <text x="72" y="39" text-anchor="middle" font-size="13" font-weight="700">Login</text>
+              <text x="72" y="56" text-anchor="middle" font-size="11">Role Access</text>
+
+              <rect x="176" y="18" width="120" height="52" fill="#eaf7ee" stroke="#70aa83" />
+              <text x="236" y="39" text-anchor="middle" font-size="13" font-weight="700">Dashboard</text>
+              <text x="236" y="56" text-anchor="middle" font-size="11">MTTR / MTBF</text>
+
+              <rect x="340" y="18" width="118" height="52" fill="#fff2df" stroke="#cc9652" />
+              <text x="399" y="39" text-anchor="middle" font-size="13" font-weight="700">SQLite DB</text>
+              <text x="399" y="56" text-anchor="middle" font-size="11">Machine Data</text>
+
+              <rect x="12" y="112" width="120" height="52" fill="#f3f0ff" stroke="#8d78d6" />
+              <text x="72" y="133" text-anchor="middle" font-size="13" font-weight="700">Work Orders</text>
+              <text x="72" y="150" text-anchor="middle" font-size="11">Assign & Track</text>
+
+              <rect x="176" y="112" width="120" height="52" fill="#fff0f0" stroke="#d66d6d" />
+              <text x="236" y="133" text-anchor="middle" font-size="13" font-weight="700">ML API</text>
+              <text x="236" y="150" text-anchor="middle" font-size="11">FastAPI + XGBoost</text>
+
+              <rect x="340" y="112" width="118" height="52" fill="#e9f7fb" stroke="#5aa8bd" />
+              <text x="399" y="133" text-anchor="middle" font-size="13" font-weight="700">Prediction</text>
+              <text x="399" y="150" text-anchor="middle" font-size="11">Risk / Trend</text>
+
+              <rect x="94" y="206" width="120" height="52" fill="#eef7e6" stroke="#85a95f" />
+              <text x="154" y="227" text-anchor="middle" font-size="13" font-weight="700">Resources</text>
+              <text x="154" y="244" text-anchor="middle" font-size="11">Stock Alerts</text>
+
+              <rect x="258" y="206" width="120" height="52" fill="#f7f7f7" stroke="#888" />
+              <text x="318" y="227" text-anchor="middle" font-size="13" font-weight="700">Safety</text>
+              <text x="318" y="244" text-anchor="middle" font-size="11">Incident Reports</text>
+
+              <line x1="132" y1="44" x2="174" y2="44" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+              <line x1="296" y1="44" x2="338" y2="44" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+              <line x1="399" y1="70" x2="399" y2="110" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+              <line x1="340" y1="138" x2="298" y2="138" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+              <line x1="176" y1="138" x2="134" y2="138" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+              <line x1="154" y1="206" x2="154" y2="166" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+              <line x1="318" y1="206" x2="318" y2="166" stroke="#17202a" stroke-width="3" marker-end="url(#arrow)" />
+            </svg>
+            <div class="caption">Data flow from role login to dashboard, database, work orders, inventory and predictive risk output.</div>
+          </div>
+        </article>
+      </div>
+
+      <div>
+        <article class="section">
+          <h3>Results</h3>
+          <div class="metrics">
+            <div class="metric"><strong>10,000</strong><span>Generated maintenance records</span></div>
+            <div class="metric"><strong>50</strong><span>Simulated machine IDs</span></div>
+            <div class="metric"><strong>3</strong><span>ML model outputs</span></div>
+          </div>
+          <p><span class="lead-label">Dashboard Monitoring:</span> The dashboard displays MTTR, MTBF, total machines, active machines and breakdown machines for quick decision-making.</p>
+          <p><span class="lead-label">Work Order Control:</span> Managers and admins can create maintenance work orders, assign technicians and update progress from pending to in-progress or completed.</p>
+          <p><span class="lead-label">Machine Intelligence:</span> Each machine detail page can request predicted MTBF, predicted MTTR, failure probability, risk level and trend from the ML service.</p>
+          <p><span class="lead-label">Inventory Visibility:</span> Low-stock spare materials are highlighted automatically, and resource reports can be exported for planning.</p>
+          <p><span class="lead-label">Operational Safety:</span> Safety reports are stored with employee name, description and date, helping the team maintain incident history.</p>
+        </article>
+
+        <article class="section">
+          <h3>Model Features</h3>
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Average MTBF</td>
+                <td>Measures recent uptime behavior before failure.</td>
+              </tr>
+              <tr>
+                <td>Average MTTR</td>
+                <td>Measures recent repair duration pattern.</td>
+              </tr>
+              <tr>
+                <td>MTBF Trend</td>
+                <td>Detects whether machine reliability is improving or decreasing.</td>
+              </tr>
+              <tr>
+                <td>MTTR Trend</td>
+                <td>Identifies changes in repair complexity.</td>
+              </tr>
+              <tr>
+                <td>MTTR Variance</td>
+                <td>Captures inconsistency in repair time.</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="section">
+          <h3>Output Classes</h3>
+          <div class="badge-row">
+            <div class="badge green">LOW RISK</div>
+            <div class="badge amber">MEDIUM RISK</div>
+            <div class="badge blue">TREND</div>
+          </div>
+        </article>
+      </div>
+
+      <div>
+        <article class="section">
+          <h3>Conclusions</h3>
+          <p>
+            The proposed Smart CMMS improves maintenance visibility by integrating
+            machine details, breakdown history, technician assignments, resource stock
+            and safety reporting into one web application. It supports faster response
+            during machine failure and helps managers review maintenance performance
+            using MTTR and MTBF values.
+          </p>
+          <p>
+            The predictive module adds forward-looking support by estimating failure
+            probability and risk level from recent logs. This enables preventive action,
+            better spare planning and reduced production downtime. The modular structure
+            also allows future extension with live sensor readings, notification alerts
+            and richer reporting.
+          </p>
+        </article>
+
+        <article class="section">
+          <h3>Advantages</h3>
+          <ul>
+            <li>Centralized maintenance history for all machines.</li>
+            <li>Role-based access for secure task handling.</li>
+            <li>Real-time dashboard view of operational condition.</li>
+            <li>Automated low-stock indication for spare materials.</li>
+            <li>ML-supported prediction for proactive maintenance planning.</li>
+          </ul>
+        </article>
+
+        <article class="section">
+          <h3>Future Scope</h3>
+          <ul>
+            <li>Connect IoT sensors for live vibration, temperature and load data.</li>
+            <li>Add email/SMS alerts for high-risk machines and low stock.</li>
+            <li>Include charts for monthly breakdown trends and technician workload.</li>
+            <li>Deploy the ML service and web app together for production use.</li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+  </main>
+</body>
+</html>

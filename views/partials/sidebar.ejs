@@ -1,0 +1,22 @@
+<aside class="sidebar p-3 p-lg-4">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <div class="text-uppercase small text-white-50">JK Fenner</div>
+      <h4 class="mb-0">CMMS Portal</h4>
+    </div>
+  </div>
+
+  <div class="surface-card bg-white bg-opacity-10 border-0 p-3 mb-4 text-white">
+    <div class="small text-white-50">Signed in as</div>
+    <div class="fw-semibold"><%= user.name %></div>
+    <div class="small"><%= user.role %></div>
+  </div>
+
+  <nav class="nav flex-column">
+    <a class="nav-link <%= currentPath === '/dashboard' ? 'active' : '' %>" href="/dashboard">Dashboard</a>
+    <a class="nav-link <%= currentPath.startsWith('/machines') ? 'active' : '' %>" href="/machines">Machines</a>
+    <a class="nav-link <%= currentPath.startsWith('/work-orders') ? 'active' : '' %>" href="/work-orders">Work Orders</a>
+    <a class="nav-link <%= currentPath.startsWith('/resources') ? 'active' : '' %>" href="/resources">Resources</a>
+    <a class="nav-link <%= currentPath.startsWith('/safety') ? 'active' : '' %>" href="/safety">Safety</a>
+  </nav>
+</aside>

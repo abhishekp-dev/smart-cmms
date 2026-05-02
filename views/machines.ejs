@@ -1,0 +1,63 @@
+<%- include('partials/header', { title }) %>
+<div class="app-shell d-lg-flex">
+  <%- include('partials/sidebar') %>
+
+  <div class="content-area">
+    <%- include('partials/topbar', { title }) %>
+
+    <main class="p-3 p-lg-4">
+      <div class="surface-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <div class="section-title">Machine Overview</div>
+            <div class="text-muted">Track status, hours, and service windows.</div>
+          </div>
+          <% if (['Admin', 'Manager'].includes(user.role)) { %>
+            <a class="btn btn-outline-primary btn-sm" href="/machines/failures/export">
+              Download Failure Details
+            </a>
+          <% } %>
+        </div>
+        <div class="row g-4">
+          <% machines.forEach((machine) => { %>
+            <div class="col-md-6 col-xl-4">
+              <div class="surface-card p-4 h-100 <%= machine.status === 'Breakdown' ? 'highlight-danger' : '' %>">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h3 class="h5 mb-1"><%= machine.name %></h3>
+                    <div class="text-muted small"><%= machine.component_count %> components</div>
+                  </div>
+                  <% if (['Admin', 'Manager'].includes(user.role)) { %>
+                    <form action="/machines/<%= machine.id %>/status" method="POST" class="m-0">
+                      <select name="status" class="form-select form-select-sm status-pill status-<%= machine.status.toLowerCase() %>" style="width: auto; appearance: none; padding-right: 1.5rem; background-image: url('data:image/svg+xml,%3csvg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 16 16\\' fill=\\'%23212529\\'%3e%3cpath fill-rule=\\'evenodd\\' d=\\'M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\\'/%3e%3c/svg%3e');" onchange="this.form.submit()">
+                        <option value="Active" <%= machine.status === 'Active' ? 'selected' : '' %>>Active</option>
+                        <option value="Idle" <%= machine.status === 'Idle' ? 'selected' : '' %>>Idle</option>
+                        <option value="Breakdown" <%= machine.status === 'Breakdown' ? 'selected' : '' %>>Breakdown</option>
+                      </select>
+                    </form>
+                  <% } else { %>
+                    <span class="status-pill status-<%= machine.status.toLowerCase() %>"><%= machine.status %></span>
+                  <% } %>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-6">
+                    <div class="small text-muted">Working Hours</div>
+                    <div class="fw-semibold"><%= machine.working_hours %>h</div>
+                  </div>
+                  <div class="col-6">
+                    <div class="small text-muted">Idle Hours</div>
+                    <div class="fw-semibold"><%= machine.idle_hours %>h</div>
+                  </div>
+                </div>
+                <div class="small text-muted mb-1">Service Window</div>
+                <div class="mb-3"><%= machine.last_service_date || '-' %> to <%= machine.next_service_date || '-' %></div>
+                <a class="btn btn-outline-primary btn-sm" href="/machines/<%= machine.id %>">View details</a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<%- include('partials/footer') %>

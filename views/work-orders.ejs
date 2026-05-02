@@ -1,0 +1,120 @@
+<%- include('partials/header', { title }) %>
+<div class="app-shell d-lg-flex">
+  <%- include('partials/sidebar') %>
+
+  <div class="content-area">
+    <%- include('partials/topbar', { title }) %>
+
+    <main class="p-3 p-lg-4">
+      <div class="row g-4">
+        <div class="col-xl-5">
+          <div class="surface-card p-4">
+            <div class="section-title mb-3">Create Work Order</div>
+            <% if (['Admin', 'Manager'].includes(user.role)) { %>
+              <form method="POST" action="/work-orders" class="d-grid gap-3">
+                <input class="form-control" name="title" placeholder="Work order title" required />
+                <textarea class="form-control" name="description" rows="3" placeholder="Maintenance description"></textarea>
+                <select class="form-select" name="machine_id" required>
+                  <option value="">Select machine</option>
+                  <% machines.forEach((machine) => { %>
+                    <option value="<%= machine.id %>"><%= machine.name %></option>
+                  <% }) %>
+                </select>
+                <select class="form-select" name="assigned_to">
+                  <option value="">Assign technician</option>
+                  <% technicians.forEach((technician) => { %>
+                    <option value="<%= technician.id %>"><%= technician.name %></option>
+                  <% }) %>
+                </select>
+                <select class="form-select" name="status" required>
+                  <option>Pending</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                </select>
+                <label class="small text-muted">Failure time</label>
+                <input class="form-control" type="datetime-local" name="failure_time" required />
+                <label class="small text-muted">Start time</label>
+                <input class="form-control" type="datetime-local" name="start_time" />
+                <label class="small text-muted">End time</label>
+                <input class="form-control" type="datetime-local" name="end_time" />
+                <button class="btn btn-primary">Create Work Order</button>
+              </form>
+            <% } else { %>
+              <p class="text-muted mb-0">Technicians can update assigned jobs from the list on the right.</p>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="col-xl-7">
+          <div class="surface-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="section-title">Maintenance Queue</div>
+              <div class="text-muted small"><%= user.role === 'Technician' ? 'Showing assigned jobs only' : 'All active and historical jobs' %></div>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Machine</th>
+                    <th>Technician</th>
+                    <th>Status</th>
+                    <th>Failure</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% orders.forEach((order) => { %>
+                    <tr class="<%= order.status !== 'Completed' ? 'highlight-danger' : '' %>">
+                      <td><%= order.title %></td>
+                      <td><%= order.machine_name %></td>
+                      <td><%= order.technician_name || 'Unassigned' %></td>
+                      <td><span class="status-pill status-<%= order.status.toLowerCase().replace(/\s+/g, '-') %>"><%= order.status %></span></td>
+                      <td><%= order.failure_time ? new Date(order.failure_time).toLocaleString() : '-' %></td>
+                      <td>
+                        <% if ((user.role === 'Technician' && order.technician_name === user.name) || ['Admin', 'Manager'].includes(user.role)) { %>
+                          <form method="POST" action="/work-orders/<%= order.id %>/status">
+                            <select class="form-select form-select-sm mb-2" name="status" onchange="
+                              const cat = this.nextElementSibling;
+                              if (this.value === 'Completed' && <%= order.failure_time ? 'true' : 'false' %>) {
+                                cat.style.display = 'block';
+                                cat.required = true;
+                              } else {
+                                cat.style.display = 'none';
+                                cat.required = false;
+                                this.form.submit();
+                              }
+                            ">
+                              <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                              <option value="In Progress" <%= order.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                              <option value="Completed" <%= order.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                            </select>
+                            <select class="form-select form-select-sm mb-2" name="failure_category" style="display: none;" onchange="this.form.submit()">
+                              <option value="">Select Root Cause...</option>
+                              <option value="Mechanical Failure">Mechanical Failure</option>
+                              <option value="Electrical Issue">Electrical Issue</option>
+                              <option value="Hydraulic/Pneumatic">Hydraulic/Pneumatic</option>
+                              <option value="Software/Control">Software/Control</option>
+                              <option value="Operator Error">Operator Error</option>
+                              <option value="Normal Wear & Tear">Normal Wear & Tear</option>
+                            </select>
+                            <% if (order.failure_category) { %>
+                              <div class="small text-muted mt-1">Cause: <%= order.failure_category %></div>
+                            <% } %>
+                          </form>
+                        <% } else { %>
+                          <span class="text-muted small">No access</span>
+                        <% } %>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<%- include('partials/footer') %>

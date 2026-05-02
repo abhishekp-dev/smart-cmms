@@ -1,0 +1,137 @@
+<%- include('partials/header', { title }) %>
+<div class="app-shell d-lg-flex">
+  <%- include('partials/sidebar') %>
+
+  <div class="content-area">
+    <%- include('partials/topbar', { title }) %>
+
+    <main class="p-3 p-lg-4">
+      <div class="row g-4">
+        <div class="col-xl-7">
+          <div class="surface-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <div class="section-title">Materials Inventory</div>
+                <div class="text-muted small">Low stock is highlighted automatically.</div>
+              </div>
+              <% if (['Admin', 'Manager'].includes(user.role)) { %>
+                <a class="btn btn-outline-primary btn-sm" href="/resources/export">
+                  Download Resource Details
+                </a>
+              <% } %>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Stock</th>
+                    <th>Threshold</th>
+                    <th>Used</th>
+                    <th>Alert</th>
+                    <% if (['Admin', 'Manager'].includes(user.role)) { %>
+                      <th>Actions</th>
+                    <% } %>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% materials.forEach((material) => { %>
+                    <% if (editingMaterialId === material.id && ['Admin', 'Manager'].includes(user.role)) { %>
+                      <tr class="<%= material.quantity <= material.threshold ? 'highlight-warning' : '' %>">
+                        <td colspan="6">
+                          <form method="POST" action="/resources/<%= material.id %>/update" class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                              <label class="form-label small text-muted mb-1">Name</label>
+                              <input class="form-control" name="name" value="<%= material.name %>" required />
+                            </div>
+                            <div class="col-md-2">
+                              <label class="form-label small text-muted mb-1">Stock</label>
+                              <input class="form-control" type="number" step="0.01" name="quantity" value="<%= material.quantity %>" required />
+                            </div>
+                            <div class="col-md-2">
+                              <label class="form-label small text-muted mb-1">Threshold</label>
+                              <input class="form-control" type="number" step="0.01" name="threshold" value="<%= material.threshold %>" required />
+                            </div>
+                            <div class="col-md-4 d-flex gap-2">
+                              <button class="btn btn-primary btn-sm" type="submit">Save</button>
+                              <a class="btn btn-outline-secondary btn-sm" href="/resources">Cancel</a>
+                            </div>
+                          </form>
+                        </td>
+                      </tr>
+                    <% } else { %>
+                      <tr class="<%= material.quantity <= material.threshold ? 'highlight-warning' : '' %>">
+                        <td><%= material.name %></td>
+                        <td><%= material.quantity %></td>
+                        <td><%= material.threshold %></td>
+                        <td><%= material.total_used %></td>
+                        <td>
+                          <% if (material.quantity <= material.threshold) { %>
+                            <span class="badge text-bg-warning">Low Stock</span>
+                          <% } else { %>
+                            <span class="badge text-bg-success">Healthy</span>
+                          <% } %>
+                        </td>
+                        <% if (['Admin', 'Manager'].includes(user.role)) { %>
+                          <td>
+                            <div class="d-flex gap-2">
+                              <a class="btn btn-outline-primary btn-sm" href="/resources?edit=<%= material.id %>">Edit</a>
+                              <form method="POST" action="/resources/<%= material.id %>/delete" onsubmit="return confirm('Delete this material?');">
+                                <button class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+                              </form>
+                            </div>
+                          </td>
+                        <% } %>
+                      </tr>
+                    <% } %>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-5">
+          <div class="surface-card p-4 mb-4">
+            <div class="section-title mb-3">Add Material</div>
+            <% if (['Admin', 'Manager'].includes(user.role)) { %>
+              <form method="POST" action="/resources" class="d-grid gap-3">
+                <input class="form-control" name="name" placeholder="Material name" required />
+                <input class="form-control" type="number" step="0.01" name="quantity" placeholder="Quantity in hand" required />
+                <input class="form-control" type="number" step="0.01" name="threshold" placeholder="Low stock threshold" required />
+                <button class="btn btn-primary">Save Material</button>
+              </form>
+            <% } else { %>
+              <p class="text-muted mb-0">Technicians can view inventory, while managers and admins can add new stock items.</p>
+            <% } %>
+          </div>
+
+          <div class="surface-card p-4">
+            <div class="section-title mb-3">Used Per Machine</div>
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Machine</th>
+                    <th>Material</th>
+                    <th>Qty Used</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% usageByMachine.forEach((item) => { %>
+                    <tr>
+                      <td><%= item.machine_name %></td>
+                      <td><%= item.material_name %></td>
+                      <td><%= item.quantity_used %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,22 @@
+{
+  "name": "cmms-web-app",
+  "version": "1.0.0",
+  "description": "Computerized Maintenance Management System built with Node.js, Express, and SQLite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "cmms",
+    "maintenance",
+    "express",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  }
+}
