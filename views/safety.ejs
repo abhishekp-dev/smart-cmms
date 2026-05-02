@@ -13,6 +13,12 @@
             <form method="POST" action="/safety" class="d-grid gap-3">
               <input class="form-control" name="employee_name" placeholder="Employee name" required />
               <textarea class="form-control" rows="4" name="description" placeholder="Incident description" required></textarea>
+              <select class="form-select" name="risk_level" required>
+                <option value="">Select Risk Level...</option>
+                <option value="Minor">Minor</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Major">Major</option>
+              </select>
               <input class="form-control" type="date" name="date" required />
               <button class="btn btn-primary">Submit Report</button>
             </form>
@@ -28,6 +34,7 @@
                   <tr>
                     <th>Employee</th>
                     <th>Description</th>
+                    <th>Risk Level</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -36,6 +43,15 @@
                     <tr>
                       <td><%= report.employee_name %></td>
                       <td><%= report.description %></td>
+                      <td>
+                        <% if(report.risk_level === 'Major') { %>
+                          <span class="badge bg-danger">Major</span>
+                        <% } else if(report.risk_level === 'Moderate') { %>
+                          <span class="badge bg-warning text-dark">Moderate</span>
+                        <% } else { %>
+                          <span class="badge bg-secondary"><%= report.risk_level || 'Minor' %></span>
+                        <% } %>
+                      </td>
                       <td><%= report.date %></td>
                     </tr>
                   <% }) %>

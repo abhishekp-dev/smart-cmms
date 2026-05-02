@@ -305,19 +305,19 @@ function ensureMasterData() {
   });
 
   const safetyReports = [
-    ['Ravi Kumar', 'Minor hand injury during machine repair', '2026-04-15'],
-    ['Arun Prakash', 'Slip near wet floor in workshop', '2026-04-16']
+    ['Ravi Kumar', 'Minor hand injury during machine repair', 'Minor', '2026-04-15'],
+    ['Arun Prakash', 'Slip near wet floor in workshop', 'Moderate', '2026-04-16']
   ];
 
-  safetyReports.forEach(([employeeName, description, date]) => {
+  safetyReports.forEach(([employeeName, description, riskLevel, date]) => {
     const existingReport = get(
       'SELECT id FROM safety_reports WHERE employee_name = ? AND description = ? AND date = ?',
       [employeeName, description, date]
     );
     if (!existingReport) {
       run(
-        'INSERT INTO safety_reports (employee_name, description, date) VALUES (?, ?, ?)',
-        [employeeName, description, date]
+        'INSERT INTO safety_reports (employee_name, description, risk_level, date) VALUES (?, ?, ?, ?)',
+        [employeeName, description, riskLevel, date]
       );
     }
   });
@@ -385,6 +385,7 @@ function initializeDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       employee_name TEXT NOT NULL,
       description TEXT NOT NULL,
+      risk_level TEXT NOT NULL,
       date TEXT NOT NULL
     );
 
@@ -409,6 +410,12 @@ function initializeDatabase() {
 
   try {
     run('ALTER TABLE work_orders ADD COLUMN failure_category TEXT');
+  } catch (err) {
+    // Ignore if column already exists
+  }
+
+  try {
+    run('ALTER TABLE safety_reports ADD COLUMN risk_level TEXT');
   } catch (err) {
     // Ignore if column already exists
   }
@@ -524,13 +531,13 @@ function seedData() {
   });
 
   const safetyReports = [
-    ['Aman Patel', 'Minor hand injury while replacing a drive belt.', '2026-04-09'],
-    ['Riya Shah', 'Slipped near coolant spill; no lost-time injury.', '2026-04-14']
+    ['Aman Patel', 'Minor hand injury while replacing a drive belt.', 'Minor', '2026-04-09'],
+    ['Riya Shah', 'Slipped near coolant spill; no lost-time injury.', 'Moderate', '2026-04-14']
   ];
 
   safetyReports.forEach((report) => {
     run(
-      'INSERT INTO safety_reports (employee_name, description, date) VALUES (?, ?, ?)',
+      'INSERT INTO safety_reports (employee_name, description, risk_level, date) VALUES (?, ?, ?, ?)',
       report
     );
   });

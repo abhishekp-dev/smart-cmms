@@ -613,15 +613,15 @@ app.get('/safety', ensureAuthenticated, (req, res) => {
 });
 
 app.post('/safety', ensureAuthenticated, (req, res) => {
-  const { employee_name, description, date } = req.body;
-  if (!isNonEmptyString(employee_name) || !isNonEmptyString(description) || !isNonEmptyString(date)) {
+  const { employee_name, description, risk_level, date } = req.body;
+  if (!isNonEmptyString(employee_name) || !isNonEmptyString(description) || !isNonEmptyString(risk_level) || !isNonEmptyString(date)) {
     return res.status(400).send('Invalid safety report data');
   }
 
   run(
-    `INSERT INTO safety_reports (employee_name, description, date)
-     VALUES (?, ?, ?)`,
-    [employee_name.trim(), description.trim(), date]
+    `INSERT INTO safety_reports (employee_name, description, risk_level, date)
+     VALUES (?, ?, ?, ?)`,
+    [employee_name.trim(), description.trim(), risk_level, date]
   );
   res.redirect('/safety');
 });
