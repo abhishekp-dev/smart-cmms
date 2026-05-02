@@ -1,4 +1,5 @@
 <%- include('partials/header', { title }) %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="app-shell d-lg-flex">
   <%- include('partials/sidebar') %>
 
@@ -12,6 +13,12 @@
             <div class="section-title mb-3">Report Incident</div>
             <form method="POST" action="/safety" class="d-grid gap-3">
               <input class="form-control" name="employee_name" placeholder="Employee name" required />
+              <select class="form-select" name="machine_id">
+                <option value="">(Optional) Link to Machine...</option>
+                <% machines.forEach(m => { %>
+                  <option value="<%= m.id %>"><%= m.name %></option>
+                <% }) %>
+              </select>
               <textarea class="form-control" rows="4" name="description" placeholder="Incident description" required></textarea>
               <select class="form-select" name="risk_level" required>
                 <option value="">Select Risk Level...</option>
@@ -22,6 +29,13 @@
               <input class="form-control" type="date" name="date" required />
               <button class="btn btn-primary">Submit Report</button>
             </form>
+          </div>
+
+          <div class="surface-card p-4 mt-4">
+            <div class="section-title mb-3">Safety Overview</div>
+            <div style="max-height: 300px; display: flex; justify-content: center;">
+              <canvas id="safetyChart"></canvas>
+            </div>
           </div>
         </div>
 
@@ -35,6 +49,7 @@
                     <th>Employee</th>
                     <th>Description</th>
                     <th>Risk Level</th>
+                    <th>Machine</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -52,6 +67,7 @@
                           <span class="badge bg-secondary"><%= report.risk_level || 'Minor' %></span>
                         <% } %>
                       </td>
+                      <td><span class="badge bg-light text-dark"><%= report.machine_name || 'N/A' %></span></td>
                       <td><%= report.date %></td>
                     </tr>
                   <% }) %>
@@ -64,4 +80,42 @@
     </main>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const reports = <%- JSON.stringify(reports) %>;
+  let minor = 0, moderate = 0, major = 0;
+  
+  reports.forEach(r => {
+    if(r.risk_level === 'Major') major++;
+    else if(r.risk_level === 'Moderate') moderate++;
+    else minor++;
+  });
+
+  if(minor===0 && moderate===0 && major===0) {
+    document.getElementById('safetyChart').parentElement.innerHTML = '<div class="text-muted small mt-5">No data available</div>';
+    return;
+  }
+
+  new Chart(document.getElementById('safetyChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Minor', 'Moderate', 'Major'],
+      datasets: [{
+        data: [minor, moderate, major],
+        backgroundColor: ['#6c757d', '#ffc107', '#dc3545'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+});
+</script>
+
 <%- include('partials/footer') %>

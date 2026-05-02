@@ -248,8 +248,28 @@ app.post('/machines/:id/status', allowRoles('Admin', 'Manager'), (req, res) => {
     return res.status(400).send('Invalid data');
   }
 
+  const machine = get('SELECT loto_status, loto_user_id FROM machines WHERE id = ?', [machineId]);
+  if (machine && machine.loto_status === 'Locked' && machine.loto_user_id !== req.user.id && req.user.role !== 'Admin') {
+    return res.status(403).send('Machine is locked (LOTO). Only the user who locked it or an Admin can change its status.');
+  }
+
   run('UPDATE machines SET status = ? WHERE id = ?', [status, machineId]);
   res.redirect('/machines');
+});
+
+app.post('/machines/:id/loto/lock', ensureAuthenticated, (req, res) => {
+  run('UPDATE machines SET loto_status = ?, loto_user_id = ?, status = ? WHERE id = ?', ['Locked', req.user.id, 'Breakdown', Number(req.params.id)]);
+  res.redirect('back');
+});
+
+app.post('/machines/:id/loto/unlock', ensureAuthenticated, (req, res) => {
+  const machineId = Number(req.params.id);
+  const machine = get('SELECT loto_status, loto_user_id FROM machines WHERE id = ?', [machineId]);
+  if (machine && machine.loto_status === 'Locked' && machine.loto_user_id !== req.user.id && req.user.role !== 'Admin') {
+    return res.status(403).send('Only the user who locked it or an Admin can unlock this machine.');
+  }
+  run('UPDATE machines SET loto_status = ?, loto_user_id = NULL WHERE id = ?', ['Unlocked', machineId]);
+  res.redirect('back');
 });
 
 app.get('/machines/failures/export', allowRoles('Admin', 'Manager'), (req, res) => {
@@ -446,7 +466,7 @@ app.get('/work-orders', ensureAuthenticated, (req, res) => {
   let orders;
   if (req.user.role === 'Technician') {
     orders = all(
-      `SELECT work_orders.*, machines.name AS machine_name, users.name AS technician_name
+      `SELECT work_orders.*, machines.name AS machine_name, machines.loto_status AS loto_status, users.name AS technician_name
        FROM work_orders
        JOIN machines ON machines.id = work_orders.machine_id
        LEFT JOIN users ON users.id = work_orders.assigned_to
@@ -456,7 +476,7 @@ app.get('/work-orders', ensureAuthenticated, (req, res) => {
     );
   } else {
     orders = all(
-      `SELECT work_orders.*, machines.name AS machine_name, users.name AS technician_name
+      `SELECT work_orders.*, machines.name AS machine_name, machines.loto_status AS loto_status, users.name AS technician_name
        FROM work_orders
        JOIN machines ON machines.id = work_orders.machine_id
        LEFT JOIN users ON users.id = work_orders.assigned_to
@@ -550,6 +570,11 @@ app.post('/work-orders/:id/status', ensureAuthenticated, (req, res) => {
     return res.status(400).send('Invalid work order status');
   }
 
+  const machine = get('SELECT loto_status, loto_user_id FROM machines WHERE id = ?', [order.machine_id]);
+  if (machine && machine.loto_status === 'Locked' && machine.loto_user_id !== req.user.id && req.user.role !== 'Admin') {
+    return res.status(403).send('Machine is locked (LOTO). Only the user who locked it or an Admin can change its status.');
+  }
+
   if (status === 'Completed' && !failureCategory && order.failure_time) {
     return res.status(400).send('Failure category is required to complete a breakdown work order');
   }
@@ -602,27 +627,36 @@ app.get('/predict/:machine_id', ensureAuthenticated, async (req, res) => {
 });
 
 app.get('/safety', ensureAuthenticated, (req, res) => {
-  const reports = all(
-    'SELECT * FROM safety_reports ORDER BY date DESC, id DESC'
-  );
-
+  const reports = all('SELECT safety_reports.*, machines.name as machine_name FROM safety_reports LEFT JOIN machines ON safety_reports.machine_id = machines.id ORDER BY date DESC, id DESC');
+  const machines = all('SELECT id, name FROM machines ORDER BY name');
   res.render('safety', {
     title: 'Safety',
-    reports
+    reports,
+    machines
   });
 });
 
 app.post('/safety', ensureAuthenticated, (req, res) => {
-  const { employee_name, description, risk_level, date } = req.body;
+  const { employee_name, description, risk_level, date, machine_id } = req.body;
   if (!isNonEmptyString(employee_name) || !isNonEmptyString(description) || !isNonEmptyString(risk_level) || !isNonEmptyString(date)) {
     return res.status(400).send('Invalid safety report data');
   }
 
+  const mId = machine_id ? Number(machine_id) : null;
+
   run(
-    `INSERT INTO safety_reports (employee_name, description, risk_level, date)
-     VALUES (?, ?, ?, ?)`,
-    [employee_name.trim(), description.trim(), risk_level, date]
+    `INSERT INTO safety_reports (employee_name, description, risk_level, date, machine_id)
+     VALUES (?, ?, ?, ?, ?)`,
+    [employee_name.trim(), description.trim(), risk_level, date, mId]
   );
+
+  if (risk_level === 'Major') {
+    const managers = all("SELECT id FROM users WHERE role IN ('Admin', 'Manager')");
+    managers.forEach(m => {
+      createNotification(m.id, `EMERGENCY: Major Safety Incident Reported by ${employee_name.trim()}!`);
+    });
+  }
+
   res.redirect('/safety');
 });
 

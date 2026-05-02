@@ -22,9 +22,30 @@
                       <path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 0h-1v2h2v-1h-1V9Zm-4 0h2v1h-1v1h-1V9Zm2 3v-1h-1v1h1Zm-1 0v1h2v-1h-2Zm-4 0v-1h1v1h-1Zm2 0h-1v2h1v-2Zm-2 2v-1h-1v1h1Zm-1 0v1h2v-1h-2Zm2 0h1v-1h-1v1Zm3 0v1h1v-1h-1Zm-1-1h1v-1h-1v1ZM9 9v1h1V9H9Z"/>
                     </svg>
                   </button>
+                  
+                  <% if (machine.loto_status === 'Unlocked') { %>
+                    <form method="POST" action="/machines/<%= machine.id %>/loto/lock" class="m-0">
+                      <button type="submit" class="btn btn-sm btn-outline-danger p-1 d-flex align-items-center gap-1" title="Lock Machine (LOTO)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                        Lock
+                      </button>
+                    </form>
+                  <% } else { %>
+                    <form method="POST" action="/machines/<%= machine.id %>/loto/unlock" class="m-0">
+                      <button type="submit" class="btn btn-sm btn-danger p-1 d-flex align-items-center gap-1" title="Unlock Machine (LOTO)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock-fill" viewBox="0 0 16 16"><path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/></svg>
+                        Unlock
+                      </button>
+                    </form>
+                  <% } %>
                 </div>
               </div>
-              <span class="status-pill status-<%= machine.status.toLowerCase() %>"><%= machine.status %></span>
+              <div class="d-flex flex-column align-items-end gap-2">
+                <span class="status-pill status-<%= machine.status.toLowerCase() %>"><%= machine.status %></span>
+                <% if(machine.loto_status === 'Locked') { %>
+                  <span class="badge bg-danger">LOTO LOCKED</span>
+                <% } %>
+              </div>
             </div>
             <div class="mb-3">
               <div class="small text-muted">Working Hours</div>
@@ -159,6 +180,42 @@
                       <td><%= order.failure_time ? new Date(order.failure_time).toLocaleString() : '-' %></td>
                     </tr>
                   <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <div class="surface-card p-4">
+            <div class="section-title mb-3">Safety History</div>
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Reporter</th>
+                    <th>Risk Level</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (safetyIncidents && safetyIncidents.length > 0) { %>
+                    <% safetyIncidents.forEach((inc) => { %>
+                      <tr>
+                        <td><%= inc.date %></td>
+                        <td><%= inc.employee_name %></td>
+                        <td>
+                          <% if(inc.risk_level === 'Major') { %>
+                            <span class="badge bg-danger">Major</span>
+                          <% } else if(inc.risk_level === 'Moderate') { %>
+                            <span class="badge bg-warning text-dark">Moderate</span>
+                          <% } else { %>
+                            <span class="badge bg-secondary"><%= inc.risk_level || 'Minor' %></span>
+                          <% } %>
+                        </td>
+                        <td><%= inc.description %></td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="4" class="text-muted text-center py-3">No safety incidents logged.</td></tr>
+                  <% } %>
                 </tbody>
               </table>
             </div>

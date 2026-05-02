@@ -67,7 +67,12 @@
                   <% orders.forEach((order) => { %>
                     <tr class="<%= order.status !== 'Completed' ? 'highlight-danger' : '' %>">
                       <td><%= order.title %></td>
-                      <td><%= order.machine_name %></td>
+                      <td>
+                        <%= order.machine_name %>
+                        <% if(order.loto_status === 'Locked') { %>
+                          <span class="badge bg-danger ms-1" style="font-size: 0.65rem;">LOTO LOCKED</span>
+                        <% } %>
+                      </td>
                       <td><%= order.technician_name || 'Unassigned' %></td>
                       <td><span class="status-pill status-<%= order.status.toLowerCase().replace(/\s+/g, '-') %>"><%= order.status %></span></td>
                       <td><%= order.failure_time ? new Date(order.failure_time).toLocaleString() : '-' %></td>

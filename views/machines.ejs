@@ -38,6 +38,9 @@
                   <% } else { %>
                     <span class="status-pill status-<%= machine.status.toLowerCase() %>"><%= machine.status %></span>
                   <% } %>
+                  <% if (machine.loto_status === 'Locked') { %>
+                    <span class="badge bg-danger ms-2">LOTO LOCKED</span>
+                  <% } %>
                 </div>
                 <div class="row g-3 mb-3">
                   <div class="col-6">

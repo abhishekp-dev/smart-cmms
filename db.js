@@ -340,7 +340,10 @@ function initializeDatabase() {
       working_hours REAL NOT NULL DEFAULT 0,
       idle_hours REAL NOT NULL DEFAULT 0,
       last_service_date TEXT,
-      next_service_date TEXT
+      next_service_date TEXT,
+      loto_status TEXT DEFAULT 'Unlocked',
+      loto_user_id INTEGER,
+      FOREIGN KEY (loto_user_id) REFERENCES users(id)
     );
 
     CREATE TABLE IF NOT EXISTS machine_components (
@@ -386,7 +389,9 @@ function initializeDatabase() {
       employee_name TEXT NOT NULL,
       description TEXT NOT NULL,
       risk_level TEXT NOT NULL,
-      date TEXT NOT NULL
+      date TEXT NOT NULL,
+      machine_id INTEGER,
+      FOREIGN KEY (machine_id) REFERENCES machines(id)
     );
 
     CREATE TABLE IF NOT EXISTS maintenance_logs (
@@ -418,6 +423,14 @@ function initializeDatabase() {
     run('ALTER TABLE safety_reports ADD COLUMN risk_level TEXT');
   } catch (err) {
     // Ignore if column already exists
+  }
+
+  try {
+    run('ALTER TABLE safety_reports ADD COLUMN machine_id INTEGER');
+    run('ALTER TABLE machines ADD COLUMN loto_status TEXT DEFAULT "Unlocked"');
+    run('ALTER TABLE machines ADD COLUMN loto_user_id INTEGER');
+  } catch (err) {
+    // Ignore if columns already exist
   }
 
   const userCount = get('SELECT COUNT(*) AS count FROM users').count;
